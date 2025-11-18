@@ -1,0 +1,65 @@
+
+
+
+# Training configuration
+training:
+  max_epochs: 200
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  gradient_clip_val: 1.0
+  accumulate_grad_batches: 1
+  seed : 42
+  img_size: [448, 448]
+  batch_size: 2
+  num_workers: 4
+  augmentation: true
+
+# Optimizer configuration
+optimizer:
+  type: AdamW
+  betas: [0.9, 0.999]
+  eps: 1e-08
+
+# Scheduler configuration
+scheduler:
+  type: CosineAnnealingLR
+  T_max: 100
+  eta_min: 1e-06
+
+# Loss configuration
+# loss:
+
+
+# Callbacks configuration
+callbacks:
+  checkpoint:
+    experiment_name: "face_uv"
+    checkpoint_dir: './experiments/checkpoints'
+    monitor: val/loss
+    mode: min
+    save_top_k: 3
+    every_n_epochs: 1
+    save_last: true
+  early_stopping:
+    monitor: val/loss
+    patience: 15
+    mode: min
+
+# Hardware configuration
+hardware:
+  gpus: [0] # [0, 1, 2, 3,]
+  accelerator: gpu
+  precision: 32  # Use mixed precision if available
+
+# Logging configuration
+logging:
+  log_dir: ./experiments/logs
+  log_every_n_steps: 10
+  val_check_interval: 1.0
+  check_val_every_n_epoch : 2
+
+
+dataset:
+  data_dir: /media/jseob/7c338ab7-a4a5-460a-a3bb-6c26309b51ba/datasets/head_uvd_new
+  bg_dir: /media/jseob/7c338ab7-a4a5-460a-a3bb-6c26309b51ba/datasets/no_humans
+
