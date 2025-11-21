@@ -143,7 +143,7 @@ class Decoder(nn.Module):
         self.adapt_scale2 = ConvBNReLU(128, decoder_channels // 2, 1, 1, 0)  # scale 2 (128 channels)
         self.adapt_scale4 = ConvBNReLU(256, decoder_channels, 1, 1, 0)       # scale 4 (256 channels)
         self.adapt_scale8 = ConvBNReLU(512, decoder_channels, 1, 1, 0)       # scale 8 (512 channels)
-        self.adapt_scale16 = ConvBNReLU(1024, decoder_channels * 2, 1, 1, 0) # scale 16 (DINOv3, 1024 channels)
+        self.adapt_scale16 = ConvBNReLU(768, decoder_channels * 2, 1, 1, 0) # scale 16 (DINOv3, 1024 channels)
         
         # Attention refinement for DINOv3 features
         self.arm16 = AttentionRefinementModule(decoder_channels * 2)

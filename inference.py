@@ -23,13 +23,13 @@ def parse_args():
                         help='Path to input image or directory')
     parser.add_argument('--output_dir', type=str, default='/home/jseob/Downloads/TEST/dxf_test/uv_output',
                         help='Path to output directory')
-    parser.add_argument('--checkpoint', type=str, default="experiments/checkpoints/decoder.ckpt",
+    parser.add_argument('--checkpoint', type=str, default="experiments/checkpoints/face_uv/decoder.ckpt",
                         help='Path to decoder checkpoint (without dinov3)')
     parser.add_argument('--dinov3_checkpoint', type=str, default="checkpoints/dinov3_vitl16_pretrain_lvd1689m-8aa4cbdd.pth",
                         help='Path to dinov3 checkpoint')
     parser.add_argument('--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu',
                         help='Device to run inference on')
-    parser.add_argument('--image_size', type=int, nargs=2, default=[512, 512],
+    parser.add_argument('--image_size', type=int, nargs=2, default=[448, 448],
                         help='Input image size (height, width)')
     parser.add_argument('--output_channels', type=int, default=3,
                         help='Number of output channels (U + V + mask)')
@@ -205,8 +205,8 @@ class FaceUVInference:
 
             if save:
                 # Save UV map as 16-bit PNG (2 channels)
-                uv_16bit = (uv_np * 65535).astype(np.uint16)
-                cv2.imwrite(os.path.join(output_dir, f"{base_name}_uv.png"), uv_16bit)
+                # uv_16bit = (uv_np * 65535).astype(np.uint16)
+                # cv2.imwrite(os.path.join(output_dir, f"{base_name}_uv.png"), uv_16bit)
 
                 # Save mask
                 cv2.imwrite(os.path.join(output_dir, f"{base_name}_mask.png"), mask_np)
@@ -251,19 +251,19 @@ class FaceUVInference:
         from tqdm import tqdm
         for img_idx in tqdm(range(0, num_imgs, batch_size), desc="Processing batches"):
             image_paths = image_files[img_idx:img_idx+batch_size]
-            try:
-                pred_uv, pred_mask, original_sizes = self.predict(image_paths)
-                self.save_results(
-                    image_paths,
-                    pred_uv,
-                    pred_mask,
-                    original_sizes,
-                    output_dir,
-                    save,
-                )
-            except Exception as e:
-                print(f"Error processing batch starting at index {img_idx}: {e}")
-                continue
+            # try:
+            pred_uv, pred_mask, original_sizes = self.predict(image_paths)
+            self.save_results(
+                image_paths,
+                pred_uv,
+                pred_mask,
+                original_sizes,
+                output_dir,
+                save,
+            )
+            # except Exception as e:
+            #     print(f"Error processing batch starting at index {img_idx}: {e}")
+            #     continue
 
 
 

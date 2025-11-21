@@ -46,7 +46,7 @@ class Encoder(nn.Module):
         B,C,H,W = x.shape
         with torch.no_grad():
             dinov3_features_16 = self.dinov3.forward_features(x)
-            features_16 = dinov3_features_16['x_norm_patchtokens'].permute(0,2,1).reshape(B,1024,H//16, W//16)
+            features_16 = dinov3_features_16['x_norm_patchtokens'].permute(0,2,1).reshape(B,768,H//16, W//16)
         return features_16
     
     def forward(self, x):
@@ -54,7 +54,7 @@ class Encoder(nn.Module):
         feature_pyramid = self.cnn(x)                        
         with torch.no_grad():                
             dinov3_features_16 = self.dinov3.forward_features(x)
-            features_16 = dinov3_features_16['x_norm_patchtokens'].permute(0,2,1).reshape(B,1024,H//16, W//16)
+            features_16 = dinov3_features_16['x_norm_patchtokens'].permute(0,2,1).reshape(B,768,H//16, W//16)
             del dinov3_features_16
             feature_pyramid[16] = features_16
             
