@@ -124,7 +124,8 @@ def main():
         val_check_interval=logging_config["val_check_interval"],
         check_val_every_n_epoch=logging_config["check_val_every_n_epoch"],
         num_sanity_val_steps=0,
-        deterministic=False
+        deterministic=False,
+        strategy='auto' if len(hardware_config["gpus"]) == 1 else 'ddp'
     )
 
     # Train model

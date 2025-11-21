@@ -6,22 +6,25 @@ from typing import Dict, Optional
 
 class ConvBNReLU(nn.Module):
     """Basic convolutional block with BatchNorm and ReLU."""
-    
-    def __init__(self, in_channels: int, out_channels: int, kernel_size: int = 3, 
+
+    def __init__(self, in_channels: int, out_channels: int, kernel_size: int = 3,
                  stride: int = 1, padding: int = 1, dilation: int = 1):
         super().__init__()
-        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size, 
+        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size,
                              stride, padding, dilation, bias=False)
         self.bn = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU(inplace=True)
-        
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.relu(self.bn(self.conv(x)))
+        x = self.conv(x)
+        if not x.is_contiguous():
+            x = x.contiguous()
+        return self.relu(self.bn(x))
 
 
 class DepthwiseSeparableConv(nn.Module):
     """Depthwise separable convolution for efficiency."""
-    
+
     def __init__(self, in_channels: int, out_channels: int, kernel_size: int = 3,
                  stride: int = 1, padding: int = 1):
         super().__init__()
@@ -30,10 +33,12 @@ class DepthwiseSeparableConv(nn.Module):
         self.pointwise = nn.Conv2d(in_channels, out_channels, 1, bias=False)
         self.bn = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU(inplace=True)
-        
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.depthwise(x)
         x = self.pointwise(x)
+        if not x.is_contiguous():
+            x = x.contiguous()
         x = self.bn(x)
         return self.relu(x)
 
